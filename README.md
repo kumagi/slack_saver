@@ -2,6 +2,15 @@
 
 Saving Slack logs into LevelDB
 
+# Install
+
+In ubuntu/debian
+
+```
+$ sudo apt install libleveldb-dev python-dev
+$ pip install -r requirements.txt
+```
+
 # Usage
 
 ### Copy setting file.
