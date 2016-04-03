@@ -9,8 +9,8 @@ class SlackStorage(object):
     def __init__(self, filename):
         self.db = plyvel.DB(filename, create_if_missing=True)
 
-    def get_latest_timestamp(self, channel_name):
-        channeldb = self.db.prefixed_db(channel_name + b"-")
+    def get_latest_timestamp(self, name):
+        channeldb = self.db.prefixed_db(str(name + u"-"))
         try:
             c_iter = channeldb.iterator()
             key = None
@@ -24,7 +24,7 @@ class SlackStorage(object):
             return "1"
 
     def save(self, name, msgs):
-        channeldb = self.db.prefixed_db(name + b"-")
+        channeldb = self.db.prefixed_db(str(name + "-"))
         wb = channeldb.write_batch(sync=True)
         for msg in msgs:
             wb.put(str(msg["ts"]), msgpack.dumps(msg))
