@@ -11,6 +11,8 @@ $ sudo apt install libleveldb-dev python-dev
 $ pip install -r requirements.txt
 ```
 
+if you failed in pip command, try `sudo`.
+
 # Usage
 
 ### Copy setting file.
