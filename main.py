@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-import plyvel
 import urllib
 import urllib2
 import logging
 import yaml
 import json
-import percache
+
+import plyvel
 import msgpack
 
 # logger
@@ -14,11 +14,13 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-data = yaml.load(open('setting.yaml').read().decode('utf8'))
-token = data["api_token"]
+setting = yaml.load(open('setting.yaml').read().decode('utf8'))
+token = setting["api_token"]
 
-cache = percache.Cache("slack-cache")
-@cache
+#import percache
+#cache = percache.Cache("slack-cache")
+#@cache
+
 def request(path, params = {}):
     url = "https://slack.com/api/" + path + "?";
     params["token"] = token
@@ -40,7 +42,6 @@ def get_log(channel_id, since):
     }
     return request('channels.history', options)
 
-
 def main():
     team = team_info()
     if not team["ok"]:
@@ -60,7 +61,7 @@ def main():
     for name in channels.keys():
         channeldb = logdb.prefixed_db(name + b"-")
 
-        # get latest timestamp
+        # get the latest timestamp
         try:
             c_iter = channeldb.iterator()
             key = None
@@ -83,7 +84,7 @@ def main():
             logs.extend(msgs)
             if len(msgs) == 0:
                 break
-            logger.info("{n} since {s} got {t}".format(n=name, s=since, t=len(msgs)))
+            logger.info("{n} since {s} got {t} messages".format(n=name, s=since, t=len(msgs)))
             logs.sort(key=lambda x: float(x["ts"]), reverse=True)
             # print("{n} latest is {s}".format(n=name, s=logs[0]["ts"]))
             if log["has_more"]:
@@ -94,11 +95,10 @@ def main():
         # save message logs
         wb = channeldb.write_batch(sync=True)
         for mes in logs:
-            #logger.info("{k}: {v}".format(k=str(mes["ts"]),v=json.dumps(mes)))
             wb.put(str(mes["ts"]),
                    msgpack.dumps(mes))
         write_count += len(logs)
-        #logger.info('wrote {c} messages for {n}'.format(c=len(logs), n=name))
+        # logger.info('wrote {c} messages for {n}'.format(c=len(logs), n=name))
         wb.write()
 
     logdb.close()

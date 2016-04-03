@@ -1,1 +1,2 @@
 plyvel>=0.9
+msgpack-python>=0.4.7
