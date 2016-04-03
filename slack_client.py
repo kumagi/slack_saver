@@ -6,7 +6,6 @@ import urllib2
 
 import percache
 cache = percache.Cache("slack-cache")
-@cache
 
 class SlackError(Exception):
     pass
@@ -22,7 +21,7 @@ class SlackClient(object):
         self.token = token
         self.channels = None
 
-    @cache
+    #@cache
     def _request(self, path, params = {}):
         url = "https://slack.com/api/" + path + "?";
         params["token"] = self.token

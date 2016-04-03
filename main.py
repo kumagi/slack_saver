@@ -12,19 +12,11 @@ import msgpack
 from slack_client import SlackClient
 from slack_storage import SlackStorage
 
-
-def main():
-    # logger
-    logging.basicConfig()
+def team_log_save(token):
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
 
-    # read settings
-    setting = yaml.load(open('setting.yaml').read().decode('utf8'))
-    token = setting["api_token"]
-
     sc = SlackClient(token)
-
     team = sc.team_info()
     db = SlackStorage(team["name"])
 
@@ -53,6 +45,21 @@ def main():
     db.close()
     logger.info('{c} messages saved in total {n} channels'.format(c=wrote_count,
                                                                   n=len(channels)))
+
+def main():
+    # logger
+    logging.basicConfig()
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+
+    # read settings
+    setting = yaml.load(open('setting.yaml').read().decode('utf8'))
+    tokens = setting["api_token"]
+    if isinstance(tokens, str):
+        tokens = [tokens]
+
+    for token in tokens:
+        team_log_save(token)
 
 if __name__ == "__main__":
     main()
