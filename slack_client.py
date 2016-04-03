@@ -4,8 +4,9 @@ import json
 import urllib
 import urllib2
 
-import percache
-cache = percache.Cache("slack-cache")
+# for debug use
+# import percache
+# cache = percache.Cache("slack-cache")
 
 class SlackError(Exception):
     pass
